@@ -1,0 +1,32 @@
+﻿USE FileStorageDB;
+GO
+
+CREATE TABLE Users (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Username NVARCHAR(100) UNIQUE NOT NULL,
+    Email NVARCHAR(200) UNIQUE NOT NULL,
+    PasswordHash NVARCHAR(500) NOT NULL,
+    Salt NVARCHAR(100) NOT NULL,
+    Role NVARCHAR(50) DEFAULT 'User',
+    MaxStorageBytes BIGINT DEFAULT 5368709120, -- 5GB
+    UsedStorageBytes BIGINT DEFAULT 0,
+    IsActive BIT DEFAULT 1,
+    CreatedAt DATETIME2 DEFAULT GETUTCDATE(),
+    UpdatedAt DATETIME2 NULL
+);
+GO
+
+CREATE TABLE UserFiles (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    UserId INT NOT NULL FOREIGN KEY REFERENCES Users(Id),
+    BucketName NVARCHAR(100) NOT NULL,
+    ObjectName NVARCHAR(500) NOT NULL,
+    FileName NVARCHAR(255) NOT NULL,
+    SizeBytes BIGINT NOT NULL,
+    ContentType NVARCHAR(100) NULL,
+    UploadDate DATETIME2 DEFAULT GETUTCDATE(),
+    IsDeleted BIT DEFAULT 0
+);
+GO
+
+PRINT '✅ Database Schema created successfully!';
